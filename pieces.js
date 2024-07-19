@@ -5,7 +5,8 @@ const pieces = await fetch('pieces-autos.json').then(pieces => pieces.json());
 // const pieces = await response.json()
 
 // document.querySelector('.fiches').innerHTML = "";
- 
+
+//The function genered article
 function genererPieces(pieces) {
     for(let i = 0; i < pieces.length; i++){
         const section = document.querySelector('.fiches')
@@ -81,7 +82,7 @@ boutonNoDescription.addEventListener("click", function () {
     genererPieces(piecesFiltrees);
 });
 const noms = pieces.map(piece => piece.nom);
-for(let i = pieces.length -1 ; i >= 0; i--){
+for(let i = pieces.length - 1 ; i >= 0; i--){
     if(pieces[i].prix > 35){
         noms.splice(i,1);
     }

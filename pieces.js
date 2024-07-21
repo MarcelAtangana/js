@@ -1,6 +1,17 @@
-import { ajoutListenersAvis } from "./avis.js";
+import { ajoutListenersAvis , ajoutListenerEnvoyerAvis , afficherAvis } from "./avis.js";
+let pieces = window.localStorage.getItem("pieces");
 
-const pieces = await fetch('pieces-autos.json').then(pieces => pieces.json());
+if(pieces === null){
+    const pieces = await fetch(' http://localhost:8081/pieces').then(pieces => pieces.json());
+
+   const valeurPieces = JSON.stringify(pieces);
+
+   window.localStorage.setItem("pieces", valeurPieces)
+
+} else{
+    pieces = JSON.parse(pieces)
+}
+
 
 // const pieces = await response.json()
 
@@ -9,8 +20,10 @@ const pieces = await fetch('pieces-autos.json').then(pieces => pieces.json());
 //The function genered article
 function genererPieces(pieces) {
     for(let i = 0; i < pieces.length; i++){
+
+        const article = pieces[i];
         const section = document.querySelector('.fiches')
-        const pieceElement = document.createElement("article");
+        const pieceElement = document.createElement("article")
         const imageElement = document.createElement("img");
         const nomElement = document.createElement('p');
         const prixElement = document.createElement('p');
@@ -18,13 +31,13 @@ function genererPieces(pieces) {
         const descriptionElement = document.createElement('p');
         const stockElement = document.createElement("p");
         const avisBouton = document.createElement("button");
-        imageElement.src = pieces[i].image;
-        nomElement.innerHTML = pieces[i].nom;
-        prixElement.innerHTML = `${pieces[i].prix} €`;
-        categoryElement.innerHTML = pieces[i].categorie;
-        descriptionElement.innerHTML = pieces[i].description;
-        stockElement.innerText = pieces.disponibilite ? "En stock" : "Rupture de stock";
-        avisBouton.dataset.id = pieces.id;
+        imageElement.src = article.image;
+        nomElement.innerHTML = article.nom;
+        prixElement.innerHTML = `${article.prix} €`;
+        categoryElement.innerHTML = article.categorie;
+        descriptionElement.innerHTML = article.description;
+        stockElement.innerText = article.disponibilite ? "En stock" : "Rupture de stock";
+        avisBouton.dataset.id = article.id;
         avisBouton.textContent = "Afficher les avis";
         pieceElement.appendChild(imageElement)
         pieceElement.appendChild(nomElement)
@@ -36,10 +49,23 @@ function genererPieces(pieces) {
         section.appendChild(pieceElement)
         // document.body.appendChild(pieceElement);
     }
-    ajoutListenersAvis()
+    ajoutListenersAvis();
+    ajoutListenerEnvoyerAvis();
+    afficherAvis();
 }
 
 genererPieces(pieces);
+
+for(let i = 0; i < pieces.length; i++){
+    const id = pieces[i].id;
+    const avisJSON = window.localStorage.getItem(`avis-piece-${id}`);
+    const avis = JSON.parse(avisJSON);
+
+    if(avis !== null){
+        const pieceElement = document.querySelector(`article[data-id="${id}"]`);
+        afficherAvis(pieceElement, avis)
+    }
+}
 
 const boutonTrier = document.querySelector(".btn-trier");
 boutonTrier.addEventListener("click", function () {
@@ -137,6 +163,12 @@ prixMax.addEventListener('input', function(){
     document.querySelector(".fiches").innerHTML = "";
     genererPieces(piecesFiltrees);
 })
+
+// Ajout du listener pour mettre à jour des données du localStorage
+const boutonMettreAJour = document.querySelector(".btn-maj");
+boutonMettreAJour.addEventListener("click", function () {
+  window.localStorage.removeItem("pieces");
+});
 
 // const inputPrixMax = document.querySelector('#prix-max')
 // inputPrixMax.addEventListener('input', function(){

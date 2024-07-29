@@ -1,4 +1,4 @@
-import { ajoutListenersAvis , ajoutListenerEnvoyerAvis , afficherAvis } from "./avis.js";
+import { ajoutListenersAvis , ajoutListenerEnvoyerAvis , afficherAvis ,  afficherGraphiqueAvis } from "./avis.js";
 let pieces = window.localStorage.getItem("pieces");
 
 if(pieces === null){
@@ -169,6 +169,8 @@ const boutonMettreAJour = document.querySelector(".btn-maj");
 boutonMettreAJour.addEventListener("click", function () {
   window.localStorage.removeItem("pieces");
 });
+
+await  afficherGraphiqueAvis();
 
 // const inputPrixMax = document.querySelector('#prix-max')
 // inputPrixMax.addEventListener('input', function(){
